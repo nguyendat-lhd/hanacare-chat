@@ -4,48 +4,78 @@ Fix common SQL issues like ambiguous column references, date functions, and type
 """
 import re
 
-def fix_value_column_casting(sql: str) -> str:
+def fix_value_column_casting(sql: str, table_mapping: dict = None) -> str:
     """
     Fix value column casting in aggregate functions
     value columns are VARCHAR but need to be cast to DOUBLE for AVG, SUM, etc.
     
     Args:
         sql: SQL query string
+        table_mapping: Dict mapping original table names to escaped names (optional)
     
     Returns:
         Fixed SQL query with value columns cast to DOUBLE
     """
     result_sql = sql
     
+    # Import escape_table_name if table_mapping is provided
+    escape_func = None
+    if table_mapping:
+        try:
+            from table_utils import escape_table_name
+            escape_func = escape_table_name
+        except ImportError:
+            pass
+    
     # Fix aggregate functions with value columns
-    # Pattern: AVG(value), AVG(table.value), SUM(value), etc.
-    # Match: AVG/SUM/COUNT/MIN/MAX(value) or AVG/SUM/COUNT/MIN/MAX(table.value)
-    aggregate_pattern = r'(?i)(AVG|SUM|MIN|MAX|AVERAGE)\s*\(\s*(\w+\.)?value\s*\)'
+    # Pattern: AVG(value), AVG(table.value), AVG("table".value), SUM(value), etc.
+    # Match table names with or without quotes, with dashes and special chars
+    # Pattern matches: table.value or "table".value (where table can have dashes)
+    aggregate_pattern = r'(?i)(AVG|SUM|MIN|MAX|AVERAGE)\s*\(\s*((?:"[^"]+"|[^.\s]+)\.)?value\s*\)'
     
     def fix_aggregate_value(match):
         func = match.group(1)
         table_prefix = match.group(2) or ""
         
-        # Cast value to DOUBLE for numeric operations
+        # If table prefix exists, keep it as-is (should already be escaped)
+        # If not escaped and table_mapping provided, try to escape it
         if table_prefix:
-            return f"{func}(CAST({table_prefix}value AS DOUBLE))"
+            table_with_dot = table_prefix
+            # If not already escaped (no quotes), try to escape it
+            if not table_with_dot.startswith('"') and escape_func and table_mapping:
+                table_name = table_with_dot.rstrip('.')
+                # Find matching table name in mapping
+                for orig_name in sorted(table_mapping.keys(), key=len, reverse=True):
+                    if table_name == orig_name or orig_name.endswith(table_name) or table_name in orig_name:
+                        escaped_table = escape_func(orig_name)
+                        return f"{func}(CAST({escaped_table}.value AS DOUBLE))"
+            return f"{func}(CAST({table_with_dot}value AS DOUBLE))"
         else:
             return f"{func}(CAST(value AS DOUBLE))"
     
     result_sql = re.sub(aggregate_pattern, fix_aggregate_value, result_sql)
     
     # Also fix arithmetic operations with value columns
-    # Pattern: value + 1, value - 1, value * 2, value / 2, etc.
-    arithmetic_pattern = r'(?i)(\w+\.)?value\s*([+\-*/])\s*(\d+|value|\w+\.value)'
+    # Pattern: value + 1, table.value + 1, "table".value + 1, etc.
+    arithmetic_pattern = r'(?i)((?:"[^"]+"|[^.\s]+)\.)?value\s*([+\-*/])\s*(\d+|value|(?:"[^"]+"|[^.\s]+)\.value)'
     
     def fix_arithmetic_value(match):
         table_prefix = match.group(1) or ""
         operator = match.group(2)
         operand = match.group(3)
         
-        # Cast value to DOUBLE for arithmetic
+        # If table prefix exists, keep it as-is (should already be escaped)
         if table_prefix:
-            return f"CAST({table_prefix}value AS DOUBLE) {operator} {operand}"
+            table_with_dot = table_prefix
+            # If not already escaped (no quotes), try to escape it
+            if not table_with_dot.startswith('"') and escape_func and table_mapping:
+                table_name = table_with_dot.rstrip('.')
+                # Find matching table name in mapping
+                for orig_name in sorted(table_mapping.keys(), key=len, reverse=True):
+                    if table_name == orig_name or orig_name.endswith(table_name) or table_name in orig_name:
+                        escaped_table = escape_func(orig_name)
+                        return f"CAST({escaped_table}.value AS DOUBLE) {operator} {operand}"
+            return f"CAST({table_with_dot}value AS DOUBLE) {operator} {operand}"
         else:
             return f"CAST(value AS DOUBLE) {operator} {operand}"
     
@@ -139,14 +169,26 @@ def fix_date_functions(sql: str) -> str:
             interval_unit_normalized = interval_unit_lower
         
         # Build the fixed comparison with cast
-        # Use strptime to parse timestamp strings with timezone, then cast to TIMESTAMPTZ
-        # This handles formats like "2019-02-12 10:15:05 +0000"
+        # Use COALESCE with multiple format attempts for robust date parsing
+        # Handles formats like:
+        # - "2019-02-12 10:15:05 +0000" (with timezone) - most common in Apple Health
+        # - "2019-02-12 10:15:05" (without timezone)
+        # - "2019-02-12" (date only)
         if table_prefix:
-            # Parse timestamp string and convert to TIMESTAMPTZ
-            # strptime parses the string, then we cast to TIMESTAMPTZ
-            fixed_column = f"strptime({table_prefix}{column_name}, '%Y-%m-%d %H:%M:%S %z')::TIMESTAMPTZ"
+            # Try strptime with timezone first (most common), then without timezone, then date only, then TRY_CAST
+            fixed_column = f"""COALESCE(
+                strptime({table_prefix}{column_name}, '%Y-%m-%d %H:%M:%S %z')::TIMESTAMPTZ,
+                strptime({table_prefix}{column_name}, '%Y-%m-%d %H:%M:%S')::TIMESTAMPTZ,
+                strptime({table_prefix}{column_name}, '%Y-%m-%d')::TIMESTAMPTZ,
+                TRY_CAST({table_prefix}{column_name} AS TIMESTAMPTZ)
+            )"""
         else:
-            fixed_column = f"strptime({column_name}, '%Y-%m-%d %H:%M:%S %z')::TIMESTAMPTZ"
+            fixed_column = f"""COALESCE(
+                strptime({column_name}, '%Y-%m-%d %H:%M:%S %z')::TIMESTAMPTZ,
+                strptime({column_name}, '%Y-%m-%d %H:%M:%S')::TIMESTAMPTZ,
+                strptime({column_name}, '%Y-%m-%d')::TIMESTAMPTZ,
+                TRY_CAST({column_name} AS TIMESTAMPTZ)
+            )"""
         
         # Normalize operator (≥ -> >=)
         if operator == '≥':
@@ -169,11 +211,21 @@ def fix_date_functions(sql: str) -> str:
         date_function = match.group(4)
         
         # Build the fixed comparison with cast
-        # Use strptime to parse timestamp strings with timezone
+        # Use COALESCE with multiple format attempts for robust date parsing
         if table_prefix:
-            fixed_column = f"strptime({table_prefix}{column_name}, '%Y-%m-%d %H:%M:%S %z')::TIMESTAMPTZ"
+            fixed_column = f"""COALESCE(
+                strptime({table_prefix}{column_name}, '%Y-%m-%d %H:%M:%S %z')::TIMESTAMPTZ,
+                strptime({table_prefix}{column_name}, '%Y-%m-%d %H:%M:%S')::TIMESTAMPTZ,
+                strptime({table_prefix}{column_name}, '%Y-%m-%d')::TIMESTAMPTZ,
+                TRY_CAST({table_prefix}{column_name} AS TIMESTAMPTZ)
+            )"""
         else:
-            fixed_column = f"strptime({column_name}, '%Y-%m-%d %H:%M:%S %z')::TIMESTAMPTZ"
+            fixed_column = f"""COALESCE(
+                strptime({column_name}, '%Y-%m-%d %H:%M:%S %z')::TIMESTAMPTZ,
+                strptime({column_name}, '%Y-%m-%d %H:%M:%S')::TIMESTAMPTZ,
+                strptime({column_name}, '%Y-%m-%d')::TIMESTAMPTZ,
+                TRY_CAST({column_name} AS TIMESTAMPTZ)
+            )"""
         
         # Normalize operator (≥ -> >=)
         if operator == '≥':

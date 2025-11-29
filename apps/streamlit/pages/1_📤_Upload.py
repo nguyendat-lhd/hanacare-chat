@@ -46,9 +46,13 @@ with st.expander("📖 How to Export Health Data", expanded=False):
 existing_files = get_file_metadata(user_id)
 csv_files = list(storage_path.glob("*.csv")) if storage_path.exists() else []
 
-# Check if using sample data
-is_sample_data = len(csv_files) > 0 and len(csv_files) <= 4 and all(
-    f.stem in ['steps', 'heart_rate', 'sleep', 'workouts'] for f in csv_files
+# Check if using sample data (only if no uploaded data in DB)
+# Sample data = files exist but no metadata in DB
+is_sample_data = (
+    len(csv_files) > 0 and 
+    len(csv_files) <= 4 and 
+    all(f.stem in ['steps', 'heart_rate', 'sleep', 'workouts'] for f in csv_files) and
+    len(existing_files) == 0  # No uploaded data in DB
 )
 
 if csv_files:
@@ -84,6 +88,15 @@ uploaded_file = st.file_uploader(
 if uploaded_file:
     with st.spinner("Processing your health data..."):
         try:
+            # Remove sample data files if they exist (before extracting new data)
+            # Only remove if they are sample data (no metadata in DB)
+            if is_sample_data:
+                sample_data_files = ['steps.csv', 'heart_rate.csv', 'sleep.csv', 'workouts.csv']
+                for sample_file in sample_data_files:
+                    sample_path = storage_path / sample_file
+                    if sample_path.exists():
+                        sample_path.unlink()
+            
             # Save uploaded file
             zip_path = storage_path / uploaded_file.name
             with open(zip_path, "wb") as f:

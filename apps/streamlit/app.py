@@ -58,9 +58,9 @@ else:
         st.title("🍎 HealthSync AI")
         st.success(f"✅ Logged in as: **{st.session_state.user_id}**")
         
-        if st.button("🚪 Logout", use_container_width=True):
-            # Cleanup
-            if st.session_state.mcp_client:
+        if st.button("🚪 Logout", width='stretch'):
+            # Cleanup MCP client
+            if st.session_state.get("mcp_client"):
                 try:
                     asyncio.run(st.session_state.mcp_client.close())
                 except:
@@ -96,7 +96,7 @@ else:
             st.info("💡 Sample data will be auto-generated when you use **Chat** page")
         
         # MCP connection status
-        if st.session_state.mcp_connected:
+        if st.session_state.get("mcp_connected"):
             st.success("✅ MCP Server connected")
         else:
             st.warning("⚠️ MCP Server not connected")
@@ -125,18 +125,32 @@ else:
                 client = MCPHealthClient()
                 # Try to connect
                 try:
-                    asyncio.run(client.connect())
-                    st.session_state.mcp_client = client
-                    st.session_state.mcp_connected = True
-                    st.success("✅ Connected to MCP Server")
+                    connection_result = asyncio.run(client.connect())
+                    if connection_result:
+                        st.session_state.mcp_client = client
+                        st.session_state.mcp_connected = True
+                        st.success("✅ Connected to MCP Server")
+                    else:
+                        st.warning("⚠️ MCP Server connection failed")
+                        st.info("You can still use the app, but AI features may be limited")
+                        st.session_state.mcp_client = client
+                        st.session_state.mcp_connected = False
                 except Exception as e:
-                    st.warning(f"⚠️ MCP Server connection failed: {e}")
+                    import traceback
+                    error_details = traceback.format_exc()
+                    st.warning(f"⚠️ MCP Server connection failed: {str(e)}")
+                    with st.expander("🔍 Error Details", expanded=False):
+                        st.code(error_details)
                     st.info("You can still use the app, but AI features may be limited")
                     st.session_state.mcp_client = client
                     st.session_state.mcp_connected = False
         except Exception as e:
-            st.error(f"Failed to initialize MCP Client: {e}")
-            st.info("Make sure the MCP Server is running")
+            import traceback
+            error_details = traceback.format_exc()
+            st.error(f"Failed to initialize MCP Client: {str(e)}")
+            with st.expander("🔍 Error Details", expanded=False):
+                st.code(error_details)
+            st.info("Make sure the MCP Server is running. The app will use a fallback client.")
     
     # Quick stats
     if st.session_state.health_data_loaded:

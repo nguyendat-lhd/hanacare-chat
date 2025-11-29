@@ -109,7 +109,7 @@ try:
                     steps_df[date_col] = pd.to_datetime(steps_df[date_col], errors='coerce')
                     steps_df = steps_df.sort_values(date_col)
                     fig = px.line(steps_df, x=date_col, y=value_col, title="Steps Over Time")
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, width='stretch')
                 else:
                     st.dataframe(steps_df.head(20))
         except Exception as e:
@@ -131,7 +131,7 @@ try:
                         hr_df[date_col] = pd.to_datetime(hr_df[date_col], errors='coerce')
                         hr_df = hr_df.sort_values(date_col)
                         fig = px.line(hr_df, x=date_col, y=value_col, title="Heart Rate Over Time")
-                        st.plotly_chart(fig, use_container_width=True)
+                        st.plotly_chart(fig, width='stretch')
                     else:
                         st.dataframe(hr_df.head(20))
         except Exception as e:
@@ -147,7 +147,7 @@ try:
         try:
             escaped_table = escape_table_name(selected_table)
             df = conn.execute(f"SELECT * FROM {escaped_table} LIMIT 100").df()
-            st.dataframe(df, use_container_width=True)
+            st.dataframe(df, width='stretch')
             
             st.markdown(f"**Columns:** {', '.join(df.columns)}")
             st.markdown(f"**Rows shown:** {len(df)} (limited to 100)")

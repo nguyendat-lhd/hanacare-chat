@@ -60,6 +60,16 @@ def get_chat_history(user_id: str, limit: int = 50):
         print(f"Error getting chat history: {e}")
         return []
 
+def clear_chat_history(user_id: str):
+    """Clear all chat history for user"""
+    try:
+        db = get_db()
+        result = db.chat_messages.delete_many({"user_id": user_id})
+        return result.deleted_count
+    except Exception as e:
+        print(f"Error clearing chat history: {e}")
+        return 0
+
 def save_file_metadata(user_id: str, metadata: dict):
     """Save file upload metadata"""
     try:

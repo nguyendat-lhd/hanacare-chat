@@ -18,12 +18,17 @@ except ImportError:
 class MCPHealthClient:
     """Client for connecting to HealthSync MCP Server"""
     
-    def __init__(self, use_simple=False):
+    def __init__(self, use_simple=None):
         self.session = None
         self.read_stream = None
         self.write_stream = None
         self.server_params = None
-        self.use_simple = use_simple or not MCP_AVAILABLE
+        # If use_simple is None, auto-detect based on MCP availability
+        if use_simple is None:
+            self.use_simple = not MCP_AVAILABLE
+        else:
+            self.use_simple = use_simple or not MCP_AVAILABLE
+        self._stdio_context = None  # Store the context manager
     
     async def connect(self):
         """Start MCP server and connect"""
@@ -42,20 +47,52 @@ class MCPHealthClient:
             server_path = project_root / "packages" / "mcp_server" / "server.py"
             
             if not server_path.exists():
-                raise FileNotFoundError(f"MCP server not found at {server_path}")
+                # Try alternative path resolution
+                alt_project_root = Path.cwd()
+                alt_server_path = alt_project_root / "packages" / "mcp_server" / "server.py"
+                if alt_server_path.exists():
+                    server_path = alt_server_path
+                    project_root = alt_project_root
+                else:
+                    raise FileNotFoundError(f"MCP server not found at {server_path} or {alt_server_path}")
+            
+            # Try python3 first, fallback to python
+            import shutil
+            python_cmd = shutil.which("python3") or shutil.which("python")
+            if not python_cmd:
+                raise FileNotFoundError("Python not found in PATH")
             
             self.server_params = StdioServerParameters(
-                command="python",
+                command=python_cmd,
                 args=[str(server_path)]
             )
             
-            # Use stdio_client to get streams
-            self.read_stream, self.write_stream = await stdio_client(self.server_params)
-            self.session = ClientSession(self.read_stream, self.write_stream)
-            await self.session.initialize()
-            return True
+            # stdio_client returns a context manager, use async with
+            # We need to enter the context manager and keep it alive
+            try:
+                self._stdio_context = stdio_client(self.server_params)
+                self.read_stream, self.write_stream = await self._stdio_context.__aenter__()
+                self.session = ClientSession(self.read_stream, self.write_stream)
+                await self.session.initialize()
+                return True
+            except Exception as context_error:
+                # If context manager fails, clean up and raise
+                if self._stdio_context:
+                    try:
+                        await self._stdio_context.__aexit__(None, None, None)
+                    except:
+                        pass
+                    self._stdio_context = None
+                raise context_error
         except Exception as e:
             print(f"MCP connection error: {e}, falling back to simple client")
+            # Clean up if context was entered
+            if self._stdio_context:
+                try:
+                    await self._stdio_context.__aexit__(None, None, None)
+                except:
+                    pass
+                self._stdio_context = None
             # Fallback to simple client
             from utils.mcp_client_simple import MCPHealthClientSimple
             self.use_simple = True
@@ -112,6 +149,13 @@ class MCPHealthClient:
                 await self.session.close()
             except:
                 pass
+            # Exit the stdio context manager
+            if self._stdio_context:
+                try:
+                    await self._stdio_context.__aexit__(None, None, None)
+                except:
+                    pass
+                self._stdio_context = None
             self.session = None
             self.read_stream = None
             self.write_stream = None

@@ -4,8 +4,15 @@ Returns available tables and their columns
 """
 import json
 import os
+import sys
 from pathlib import Path
 import duckdb
+
+# Add tools directory to path for imports
+tools_dir = Path(__file__).parent
+if str(tools_dir) not in sys.path:
+    sys.path.insert(0, str(tools_dir))
+
 from table_utils import escape_table_name
 
 async def get_health_schema(user_id: str) -> dict:

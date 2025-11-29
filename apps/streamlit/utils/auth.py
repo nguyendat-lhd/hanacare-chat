@@ -55,7 +55,7 @@ def login_page():
         user_id = st.text_input("User ID", key="login_user_id")
         password = st.text_input("Password", type="password", key="login_password")
         
-        if st.button("Login", use_container_width=True):
+        if st.button("Login", width='stretch'):
             if user_id and password:
                 if check_auth(user_id, password):
                     from utils.session import create_session
@@ -84,7 +84,7 @@ def login_page():
         new_password = st.text_input("Password", type="password", key="signup_password")
         confirm_password = st.text_input("Confirm Password", type="password", key="signup_confirm")
         
-        if st.button("Sign Up", use_container_width=True):
+        if st.button("Sign Up", width='stretch'):
             if new_user_id and new_password:
                 if new_password != confirm_password:
                     st.error("❌ Passwords do not match")

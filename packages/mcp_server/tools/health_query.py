@@ -3,11 +3,18 @@ Tool: Execute SQL query on health data
 Uses DuckDB to query CSV files directly
 """
 import json
+import sys
 import duckdb
 from pathlib import Path
 from datetime import datetime
+
+# Add tools directory to path for imports
+tools_dir = Path(__file__).parent
+if str(tools_dir) not in sys.path:
+    sys.path.insert(0, str(tools_dir))
+
 from table_utils import escape_table_name
-from sql_fixer import fix_ambiguous_columns
+from sql_fixer import fix_ambiguous_columns, fix_date_functions, fix_value_column_casting
 import re
 
 async def execute_health_query(sql: str, user_id: str) -> dict:
@@ -170,29 +177,70 @@ async def execute_health_query(sql: str, user_id: str) -> dict:
             }
         
         # Replace table names in SQL query with escaped names (keep original names)
-        # Just escape table names that appear in SQL
+        # Escape table names in all contexts: FROM, JOIN, CAST, SELECT, etc.
+        # Sort by length (longest first) to avoid partial replacements
+        sorted_table_names = sorted(table_mapping.keys(), key=len, reverse=True)
         normalized_sql = sql
-        for original_name in table_mapping.keys():
+        
+        for original_name in sorted_table_names:
             escaped_name = escape_table_name(original_name)
-            # Replace original name with escaped name in SQL
-            # Match after FROM, JOIN, etc.
-            pattern = r'(?i)(FROM|JOIN|INTO|UPDATE|TABLE)\s+' + re.escape(original_name) + r'(?=\s|;|$|,|\()'
-            normalized_sql = re.sub(pattern, r'\1 ' + escaped_name, normalized_sql)
-            # Also replace if quoted (but keep the quotes, just ensure they're there)
-            pattern_quoted = r'"' + re.escape(original_name) + r'"'
+            escaped_original = re.escape(original_name)
+            
+            # Pattern 1: Match after FROM, JOIN, etc.
+            pattern1 = r'(?i)(FROM|JOIN|INTO|UPDATE|TABLE)\s+' + escaped_original + r'(?=\s|;|$|,|\()'
+            normalized_sql = re.sub(pattern1, r'\1 ' + escaped_name, normalized_sql)
+            
+            # Pattern 2: Match in CAST statements: CAST(table.value AS ...)
+            # Don't use \b because table names have dashes. Use lookbehind/lookahead instead
+            # Match: CAST(table.value AS ...) or CAST( table.value AS ...)
+            cast_pattern = r'(?i)(CAST\s*\()\s*' + escaped_original + r'\.(\w+)(?=\s+AS)'
+            normalized_sql = re.sub(cast_pattern, r'\1' + escaped_name + r'.\2', normalized_sql)
+            
+            # Pattern 3: Match table.column in any context (SELECT, WHERE, etc.)
+            # Match: table.column where table is the original_name
+            # Use negative lookbehind to ensure not already escaped
+            table_column_pattern = r'(?i)(?<!")' + escaped_original + r'\.(\w+)(?=\s|,|;|\)|$|AS|WHERE|GROUP|ORDER|HAVING)'
+            normalized_sql = re.sub(table_column_pattern, escaped_name + r'.\1', normalized_sql)
+            
+            # Pattern 4: Match standalone table names (not table.column, not in FROM/JOIN)
+            # Use lookbehind/lookahead to ensure it's a complete identifier
+            # Don't match if it's already part of table.column (handled by Pattern 3)
+            standalone_pattern = r'(?i)(?<!["\w])' + escaped_original + r'(?!\.|\w)'
+            # Only replace if not already escaped
+            if original_name in normalized_sql and escaped_name not in normalized_sql:
+                # Check if it's not already in a FROM/JOIN context (handled by Pattern 1)
+                if not re.search(r'(?i)(FROM|JOIN)\s+' + escaped_original, normalized_sql):
+                    normalized_sql = re.sub(standalone_pattern, escaped_name, normalized_sql)
+            
+            # Pattern 5: Replace if quoted (but keep the quotes, just ensure they're there)
+            pattern_quoted = r'"' + escaped_original + r'"'
             if pattern_quoted in normalized_sql:
                 normalized_sql = re.sub(pattern_quoted, escaped_name, normalized_sql, flags=re.IGNORECASE)
-            # Replace unquoted table names in FROM/JOIN
-            pattern_unquoted = r'(?i)(FROM|JOIN)\s+' + re.escape(original_name) + r'(?=\s|,|;|$|WHERE|GROUP|ORDER|HAVING)'
+            
+            # Pattern 6: Replace unquoted table names in FROM/JOIN (backup for Pattern 1)
+            pattern_unquoted = r'(?i)(FROM|JOIN)\s+' + escaped_original + r'(?=\s|,|;|$|WHERE|GROUP|ORDER|HAVING)'
             normalized_sql = re.sub(pattern_unquoted, r'\1 ' + escaped_name, normalized_sql)
         
         # Fix ambiguous column references, date functions, and value column casting
         try:
-            from sql_fixer import fix_ambiguous_columns, fix_date_functions, fix_value_column_casting
+            # sql_fixer is already imported at top of file
             # First fix date functions (MySQL/PostgreSQL -> DuckDB)
             normalized_sql = fix_date_functions(normalized_sql)
             # Then fix value column casting (VARCHAR -> DOUBLE for aggregates)
-            normalized_sql = fix_value_column_casting(normalized_sql)
+            # Pass table_mapping so it can escape table names in CAST statements
+            normalized_sql = fix_value_column_casting(normalized_sql, table_mapping)
+            # Re-escape table names after value casting (in case new CAST statements were created)
+            # This ensures table names in CAST statements are properly escaped
+            for original_name in sorted_table_names:
+                escaped_name = escape_table_name(original_name)
+                escaped_original = re.escape(original_name)
+                # Escape table names in CAST statements: CAST(table.column AS ...)
+                # Match both with and without quotes, handle table names with dashes
+                cast_pattern = r'(?i)(CAST\s*\()\s*' + escaped_original + r'\.(\w+)(?=\s+AS)'
+                normalized_sql = re.sub(cast_pattern, r'\1' + escaped_name + r'.\2', normalized_sql)
+                # Also match if there are spaces: CAST( table.column AS ...)
+                cast_pattern_spaced = r'(?i)(CAST\s*\(\s*)' + escaped_original + r'\.(\w+)(?=\s+AS)'
+                normalized_sql = re.sub(cast_pattern_spaced, r'\1' + escaped_name + r'.\2', normalized_sql)
             # Finally fix ambiguous columns
             normalized_sql = fix_ambiguous_columns(normalized_sql, list(table_mapping.keys()))
         except Exception as fix_error:
