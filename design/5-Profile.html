@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        'health-blue': '#007AFF',
+                        'health-green': '#30D158',
+                        'health-red': '#FF3B30',
+                        'health-orange': '#FF9500',
+                        'health-purple': '#AF52DE',
+                        'chat-bg': '#F8FAFC',
+                        'sidebar-bg': '#1F2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>::-webkit-scrollbar { display: none;}</style>
+</head>
+<body class="bg-gray-50 font-sans">
+    
+    <div id="app-container" class="flex h-screen">
+        
+        <div id="sidebar" class="w-80 bg-sidebar-bg text-white flex flex-col">
+            <div id="sidebar-header" class="p-6 border-b border-gray-600">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 bg-health-blue rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-heart-pulse text-white text-lg"></i>
+                    </div>
+                    <h1 class="text-xl font-bold">HealthKit Chat</h1>
+                </div>
+                <button id="new-chat-btn" class="w-full bg-health-blue hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>New Chat</span>
+                </button>
+            </div>
+            
+            <div id="navigation-menu" class="p-4">
+                <div class="space-y-2">
+                    <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fa-solid fa-comments text-gray-400"></i>
+                        <span class="text-sm">Chat Playground</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 bg-gray-700 rounded-lg border-l-3 border-health-blue">
+                        <i class="fa-solid fa-user text-health-blue"></i>
+                        <span class="text-sm font-medium">My Profile</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fa-solid fa-chart-line text-gray-400"></i>
+                        <span class="text-sm">Health Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fa-solid fa-bell text-gray-400"></i>
+                        <span class="text-sm">Notifications</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div id="chat-history" class="flex-1 overflow-y-auto p-4">
+                <div class="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">Recent Chats</div>
+                <div class="space-y-2">
+                    <div class="p-3 hover:bg-gray-700 rounded-lg cursor-pointer">
+                        <div class="text-sm font-medium">Sleep Analysis</div>
+                        <div class="text-xs text-gray-400">Today, 2:30 PM</div>
+                    </div>
+                    <div class="p-3 hover:bg-gray-700 rounded-lg cursor-pointer">
+                        <div class="text-sm font-medium">Heart Rate Trends</div>
+                        <div class="text-xs text-gray-400">Yesterday, 4:15 PM</div>
+                    </div>
+                    <div class="p-3 hover:bg-gray-700 rounded-lg cursor-pointer">
+                        <div class="text-sm font-medium">Step Count Goals</div>
+                        <div class="text-xs text-gray-400">Dec 26, 10:22 AM</div>
+                    </div>
+                    <div class="p-3 hover:bg-gray-700 rounded-lg cursor-pointer">
+                        <div class="text-sm font-medium">Workout Summary</div>
+                        <div class="text-xs text-gray-400">Dec 25, 6:45 PM</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="sidebar-footer" class="p-4 border-t border-gray-600">
+                <div class="flex items-center space-x-3 p-3 bg-gray-700 rounded-lg">
+                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="User" class="w-8 h-8 rounded-full object-cover">
+                    <div class="flex-1 min-w-0">
+                        <div class="text-sm font-medium">Alex Johnson</div>
+                        <div class="text-xs text-gray-400 truncate">alex@example.com</div>
+                    </div>
+                    <i class="fa-solid fa-ellipsis-vertical text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div id="main-content" class="flex-1 flex flex-col overflow-hidden">
+            
+            <div id="header" class="bg-white border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <h2 class="text-xl font-semibold text-gray-900">User Profile</h2>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-health-green rounded-full"></div>
+                            <span class="text-sm text-gray-600">MCP HealthKit Connected</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="fa-solid fa-download text-gray-600"></i>
+                        </button>
+                        <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="fa-solid fa-share text-gray-600"></i>
+                        </button>
+                        <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="fa-solid fa-cog text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="profile-content" class="flex-1 overflow-y-auto bg-chat-bg">
+                <div class="max-w-6xl mx-auto p-6">
+                    
+                    <div id="profile-header-section" class="bg-white rounded-xl shadow-sm border p-8 mb-6">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center space-x-6">
+                                <div class="relative">
+                                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Profile" class="w-24 h-24 rounded-full object-cover border-4 border-health-blue">
+                                    <button class="absolute bottom-0 right-0 bg-health-blue text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
+                                        <i class="fa-solid fa-camera text-xs"></i>
+                                    </button>
+                                </div>
+                                <div>
+                                    <h1 class="text-3xl font-bold text-gray-900 mb-1">Alex Johnson</h1>
+                                    <p class="text-gray-600 mb-3">alex@example.com</p>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex items-center space-x-2 text-sm">
+                                            <i class="fa-solid fa-calendar text-health-blue"></i>
+                                            <span class="text-gray-600">Member since Jan 2023</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 text-sm">
+                                            <i class="fa-solid fa-location-dot text-health-blue"></i>
+                                            <span class="text-gray-600">San Francisco, CA</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="bg-health-blue text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors font-medium">
+                                Edit Profile
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-6 mb-6">
+                        <div id="health-score-card" class="bg-gradient-to-br from-health-blue to-blue-600 rounded-xl p-6 text-white">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="text-sm font-medium opacity-90">Health Score</div>
+                                <i class="fa-solid fa-heart-pulse text-2xl"></i>
+                            </div>
+                            <div class="text-4xl font-bold mb-2">87</div>
+                            <div class="text-sm opacity-90">Excellent condition</div>
+                            <div class="mt-4 bg-white bg-opacity-20 rounded-full h-2">
+                                <div class="bg-white h-2 rounded-full" style="width: 87%"></div>
+                            </div>
+                        </div>
+                        
+                        <div id="streak-card" class="bg-gradient-to-br from-health-green to-green-600 rounded-xl p-6 text-white">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="text-sm font-medium opacity-90">Active Streak</div>
+                                <i class="fa-solid fa-fire text-2xl"></i>
+                            </div>
+                            <div class="text-4xl font-bold mb-2">42</div>
+                            <div class="text-sm opacity-90">Days in a row</div>
+                            <div class="mt-4 flex items-center space-x-1">
+                                <i class="fa-solid fa-arrow-up text-sm"></i>
+                                <span class="text-sm font-medium">12% from last month</span>
+                            </div>
+                        </div>
+                        
+                        <div id="goals-card" class="bg-gradient-to-br from-health-purple to-purple-600 rounded-xl p-6 text-white">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="text-sm font-medium opacity-90">Goals Achieved</div>
+                                <i class="fa-solid fa-trophy text-2xl"></i>
+                            </div>
+                            <div class="text-4xl font-bold mb-2">28/30</div>
+                            <div class="text-sm opacity-90">This month</div>
+                            <div class="mt-4 bg-white bg-opacity-20 rounded-full h-2">
+                                <div class="bg-white h-2 rounded-full" style="width: 93%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-6">
+                        
+                        <div id="personal-info-section" class="bg-white rounded-xl shadow-sm border">
+                            <div class="p-6 border-b border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-lg font-semibold text-gray-900">Personal Information</h3>
+                                    <button class="text-health-blue hover:text-blue-600 text-sm font-medium">Edit</button>
+                                </div>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa-solid fa-user text-gray-400"></i>
+                                        <span class="text-sm text-gray-600">Full Name</span>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-900">Alex Johnson</span>
+                                </div>
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa-solid fa-envelope text-gray-400"></i>
+                                        <span class="text-sm text-gray-600">Email</span>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-900">alex@example.com</span>
+                                </div>
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa-solid fa-phone text-gray-400"></i>
+                                        <span class="text-sm text-gray-600">Phone</span>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-900">+1 (555) 123-4567</span>
+                                </div>
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa-solid fa-cake-candles text-gray-400"></i>
+                                        <span class="text-sm text-gray-600">Date of Birth</span>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-900">March 15, 1990</span>
+                                </div>
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa-solid fa-venus-mars text-gray-400"></i>
+                                        <span class="text-sm text-gray-600">Gender</span>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-900">Male</span>
+                                </div>
+                                <div class="flex items-center justify-between py-3">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa-solid fa-ruler-vertical text-gray-400"></i>
+                                        <span class="text-sm text-gray-600">Height</span>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-900">5'10" (178 cm)</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="health-metrics-section" class="bg-white rounded-xl shadow-sm border">
+                            <div class="p-6 border-b border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-lg font-semibold text-gray-900">Health Metrics</h3>
+                                    <button class="text-health-blue hover:text-blue-600 text-sm font-medium">View All</button>
+                                </div>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center">
+                                            <i class="fa-solid fa-heart text-health-red"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">Heart Rate</div>
+                                            <div class="text-xs text-gray-500">Resting average</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-lg font-bold text-gray-900">68 bpm</div>
+                                        <div class="text-xs text-health-green">Normal</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                                            <i class="fa-solid fa-droplet text-health-blue"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">Blood Pressure</div>
+                                            <div class="text-xs text-gray-500">Last reading</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-lg font-bold text-gray-900">120/80</div>
+                                        <div class="text-xs text-health-green">Optimal</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center">
+                                            <i class="fa-solid fa-weight-scale text-health-orange"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">Weight</div>
+                                            <div class="text-xs text-gray-500">Current</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-lg font-bold text-gray-900">175 lbs</div>
+                                        <div class="text-xs text-health-green">-3 lbs</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+                                            <i class="fa-solid fa-moon text-health-purple"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">Sleep</div>
+                                            <div class="text-xs text-gray-500">Avg per night</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-lg font-bold text-gray-900">7.2 hrs</div>
+                                        <div class="text-xs text-health-green">Good</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between py-3">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                                            <i class="fa-solid fa-person-walking text-health-green"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">Steps</div>
+                                            <div class="text-xs text-gray-500">Daily average</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-lg font-bold text-gray-900">9,847</div>
+                                        <div class="text-xs text-health-green">Above goal</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="account-settings-section" class="bg-white rounded-xl shadow-sm border mt-6">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900">Account Settings</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-3 gap-6">
+                                <button class="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-xl hover:border-health-blue hover:bg-blue-50 transition-all group">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-health-blue transition-colors">
+                                        <i class="fa-solid fa-key text-health-blue text-xl group-hover:text-white"></i>
+                                    </div>
+                                    <span class="font-medium text-gray-900">Change Password</span>
+                                    <span class="text-xs text-gray-500 mt-1">Update your password</span>
+                                </button>
+                                
+                                <button class="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-xl hover:border-health-green hover:bg-green-50 transition-all group">
+                                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-health-green transition-colors">
+                                        <i class="fa-solid fa-shield-halved text-health-green text-xl group-hover:text-white"></i>
+                                    </div>
+                                    <span class="font-medium text-gray-900">Privacy Settings</span>
+                                    <span class="text-xs text-gray-500 mt-1">Manage data privacy</span>
+                                </button>
+                                
+                                <button class="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-xl hover:border-health-purple hover:bg-purple-50 transition-all group">
+                                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-health-purple transition-colors">
+                                        <i class="fa-solid fa-bell text-health-purple text-xl group-hover:text-white"></i>
+                                    </div>
+                                    <span class="font-medium text-gray-900">Notifications</span>
+                                    <span class="text-xs text-gray-500 mt-1">Configure alerts</span>
+                                </button>
+                            </div>
+                            
+                            <div class="mt-6 pt-6 border-t border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="font-medium text-gray-900 mb-1">Data Export</div>
+                                        <div class="text-sm text-gray-600">Download all your health data</div>
+                                    </div>
+                                    <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm">
+                                        <i class="fa-solid fa-download mr-2"></i>Export Data
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 pt-6 border-t border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="font-medium text-health-red mb-1">Delete Account</div>
+                                        <div class="text-sm text-gray-600">Permanently remove your account</div>
+                                    </div>
+                                    <button class="bg-red-50 text-health-red px-4 py-2 rounded-lg hover:bg-red-100 transition-colors font-medium text-sm">
+                                        <i class="fa-solid fa-trash mr-2"></i>Delete Account
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Profile page loaded');
+});
+</script>
+
+</body>
+</html>

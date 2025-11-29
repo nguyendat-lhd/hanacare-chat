@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        'health-blue': '#007AFF',
+                        'health-green': '#30D158',
+                        'health-red': '#FF3B30',
+                        'health-orange': '#FF9500',
+                        'health-purple': '#AF52DE',
+                        'chat-bg': '#F8FAFC',
+                        'sidebar-bg': '#1F2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>::-webkit-scrollbar { display: none;}</style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-purple-50 font-sans">
+    
+    <div id="register-container" class="min-h-screen flex">
+        
+        <div id="left-panel" class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-health-blue to-health-purple p-12 flex-col justify-between relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-48 -mt-48"></div>
+            <div class="absolute bottom-0 left-0 w-80 h-80 bg-white opacity-5 rounded-full -ml-40 -mb-40"></div>
+            
+            <div id="branding-section" class="relative z-10">
+                <div class="flex items-center space-x-3 mb-8">
+                    <div class="w-12 h-12 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                        <i class="fa-solid fa-heart-pulse text-white text-xl"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-white">HealthKit Chat</h1>
+                </div>
+                <h2 class="text-4xl font-bold text-white mb-4 leading-tight">Your Personal Health Intelligence Assistant</h2>
+                <p class="text-blue-100 text-lg">Connect with your iOS Health data and get AI-powered insights about your wellness journey.</p>
+            </div>
+            
+            <div id="features-section" class="relative z-10 space-y-6">
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-shield-halved text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold mb-1">Secure & Private</h3>
+                        <p class="text-blue-100 text-sm">Your health data stays on your device with end-to-end encryption</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-brain text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold mb-1">AI-Powered Insights</h3>
+                        <p class="text-blue-100 text-sm">Get personalized health recommendations based on your data</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-chart-line text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold mb-1">Track Your Progress</h3>
+                        <p class="text-blue-100 text-sm">Monitor trends and patterns across all your health metrics</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="testimonial-section" class="relative z-10">
+                <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 border border-white border-opacity-20">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="User" class="w-12 h-12 rounded-full object-cover border-2 border-white">
+                        <div>
+                            <div class="text-white font-semibold">Sarah Mitchell</div>
+                            <div class="text-blue-100 text-sm">Health Enthusiast</div>
+                        </div>
+                    </div>
+                    <p class="text-white text-sm leading-relaxed">"HealthKit Chat has transformed how I understand my health data. The insights are incredible and have helped me improve my sleep quality significantly."</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="right-panel" class="w-full lg:w-1/2 flex items-center justify-center p-8">
+            <div id="register-form-container" class="w-full max-w-md">
+                
+                <div id="mobile-branding" class="lg:hidden text-center mb-8">
+                    <div class="flex items-center justify-center space-x-3 mb-4">
+                        <div class="w-12 h-12 bg-health-blue rounded-xl flex items-center justify-center">
+                            <i class="fa-solid fa-heart-pulse text-white text-xl"></i>
+                        </div>
+                        <h1 class="text-2xl font-bold text-gray-900">HealthKit Chat</h1>
+                    </div>
+                </div>
+                
+                <div id="form-header" class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
+                    <p class="text-gray-600">Start your health intelligence journey today</p>
+                </div>
+                
+                <div id="social-register" class="space-y-3 mb-6">
+                    <button class="w-full bg-white border-2 border-gray-200 hover:border-gray-300 text-gray-700 py-3 px-4 rounded-xl font-medium transition-all flex items-center justify-center space-x-3 hover:shadow-md">
+                        <i class="fa-brands fa-google text-lg"></i>
+                        <span>Continue with Google</span>
+                    </button>
+                    <button class="w-full bg-black hover:bg-gray-900 text-white py-3 px-4 rounded-xl font-medium transition-all flex items-center justify-center space-x-3 hover:shadow-md">
+                        <i class="fa-brands fa-apple text-lg"></i>
+                        <span>Continue with Apple</span>
+                    </button>
+                </div>
+                
+                <div id="divider" class="flex items-center my-6">
+                    <div class="flex-1 border-t border-gray-300"></div>
+                    <span class="px-4 text-sm text-gray-500">or register with email</span>
+                    <div class="flex-1 border-t border-gray-300"></div>
+                </div>
+                
+                <form id="register-form" class="space-y-4">
+                    <div id="name-group" class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="first-name" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                            <input type="text" id="first-name" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent transition-all" placeholder="John" required>
+                        </div>
+                        <div>
+                            <label for="last-name" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                            <input type="text" id="last-name" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent transition-all" placeholder="Doe" required>
+                        </div>
+                    </div>
+                    
+                    <div id="email-group">
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-envelope text-gray-400"></i>
+                            </div>
+                            <input type="email" id="email" class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent transition-all" placeholder="john.doe@example.com" required>
+                        </div>
+                    </div>
+                    
+                    <div id="password-group">
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" id="password" class="w-full pl-11 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent transition-all" placeholder="••••••••" required>
+                            <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                                <i class="fa-solid fa-eye text-gray-400 hover:text-gray-600"></i>
+                            </button>
+                        </div>
+                        <div id="password-strength" class="mt-2">
+                            <div class="flex space-x-1">
+                                <div class="h-1 flex-1 bg-gray-200 rounded-full"></div>
+                                <div class="h-1 flex-1 bg-gray-200 rounded-full"></div>
+                                <div class="h-1 flex-1 bg-gray-200 rounded-full"></div>
+                                <div class="h-1 flex-1 bg-gray-200 rounded-full"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Use 8+ characters with letters, numbers & symbols</p>
+                        </div>
+                    </div>
+                    
+                    <div id="confirm-password-group">
+                        <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" id="confirm-password" class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent transition-all" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    
+                    <div id="terms-group" class="flex items-start space-x-3">
+                        <input type="checkbox" id="terms" class="mt-1 w-4 h-4 text-health-blue border-gray-300 rounded focus:ring-health-blue" required>
+                        <label for="terms" class="text-sm text-gray-600">
+                            I agree to the <a href="#" class="text-health-blue hover:underline font-medium">Terms of Service</a> and <a href="#" class="text-health-blue hover:underline font-medium">Privacy Policy</a>
+                        </label>
+                    </div>
+                    
+                    <div id="marketing-group" class="flex items-start space-x-3">
+                        <input type="checkbox" id="marketing" class="mt-1 w-4 h-4 text-health-blue border-gray-300 rounded focus:ring-health-blue">
+                        <label for="marketing" class="text-sm text-gray-600">
+                            Send me health tips, product updates and special offers
+                        </label>
+                    </div>
+                    
+                    <button type="submit" id="register-button" class="w-full bg-health-blue hover:bg-blue-600 text-white py-3 px-4 rounded-xl font-semibold transition-all hover:shadow-lg mt-6">
+                        Create Account
+                    </button>
+                </form>
+                
+                <div id="login-link" class="text-center mt-6">
+                    <p class="text-gray-600">Already have an account? <a href="#" class="text-health-blue hover:underline font-semibold">Sign In</a></p>
+                </div>
+                
+                <div id="security-badge" class="mt-8 flex items-center justify-center space-x-2 text-sm text-gray-500">
+                    <i class="fa-solid fa-shield-halved text-health-green"></i>
+                    <span>Protected by 256-bit SSL encryption</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const togglePasswordBtn = document.getElementById('toggle-password');
+    const registerForm = document.getElementById('register-form');
+    const passwordStrengthBars = document.querySelectorAll('#password-strength .flex > div');
+    
+    togglePasswordBtn.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        const icon = this.querySelector('i');
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+    });
+    
+    passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        let strength = 0;
+        
+        if (password.length >= 8) strength++;
+        if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+        if (password.match(/[0-9]/)) strength++;
+        if (password.match(/[^a-zA-Z0-9]/)) strength++;
+        
+        passwordStrengthBars.forEach((bar, index) => {
+            bar.classList.remove('bg-health-red', 'bg-health-orange', 'bg-health-green', 'bg-gray-200');
+            if (index < strength) {
+                if (strength <= 2) bar.classList.add('bg-health-red');
+                else if (strength === 3) bar.classList.add('bg-health-orange');
+                else bar.classList.add('bg-health-green');
+            } else {
+                bar.classList.add('bg-gray-200');
+            }
+        });
+    });
+    
+    registerForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        if (password !== confirmPassword) {
+            confirmPasswordInput.classList.add('border-health-red');
+            confirmPasswordInput.focus();
+            return;
+        }
+        
+        confirmPasswordInput.classList.remove('border-health-red');
+        console.log('Registration form submitted');
+    });
+    
+    confirmPasswordInput.addEventListener('input', function() {
+        if (this.value === passwordInput.value) {
+            this.classList.remove('border-health-red');
+            this.classList.add('border-health-green');
+        } else {
+            this.classList.remove('border-health-green');
+        }
+    });
+});
+</script>
+
+</body>
+</html>

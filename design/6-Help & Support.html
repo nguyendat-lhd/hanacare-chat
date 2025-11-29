@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & Support</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        'health-blue': '#007AFF',
+                        'health-green': '#30D158',
+                        'health-red': '#FF3B30',
+                        'health-orange': '#FF9500',
+                        'health-purple': '#AF52DE',
+                        'chat-bg': '#F8FAFC',
+                        'sidebar-bg': '#1F2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>::-webkit-scrollbar { display: none;}</style>
+</head>
+<body class="bg-gray-50 font-sans">
+    
+    <div id="app-container" class="flex h-screen">
+        
+        <div id="sidebar" class="w-80 bg-sidebar-bg text-white flex flex-col">
+            <div id="sidebar-header" class="p-6 border-b border-gray-600">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 bg-health-blue rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-heart-pulse text-white text-lg"></i>
+                    </div>
+                    <h1 class="text-xl font-bold">HealthKit Chat</h1>
+                </div>
+                <button id="new-chat-btn" class="w-full bg-health-blue hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>New Chat</span>
+                </button>
+            </div>
+            
+            <div id="navigation-menu" class="flex-1 overflow-y-auto p-4">
+                <div class="space-y-2">
+                    <div class="p-3 hover:bg-gray-700 rounded-lg cursor-pointer">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-comment text-gray-400"></i>
+                            <span class="text-sm font-medium">Chat</span>
+                        </div>
+                    </div>
+                    <div class="p-3 hover:bg-gray-700 rounded-lg cursor-pointer">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-chart-line text-gray-400"></i>
+                            <span class="text-sm font-medium">Analytics</span>
+                        </div>
+                    </div>
+                    <div class="p-3 hover:bg-gray-700 rounded-lg cursor-pointer">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-database text-gray-400"></i>
+                            <span class="text-sm font-medium">Health Data</span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-gray-700 rounded-lg border-l-3 border-health-blue">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-question-circle text-health-blue"></i>
+                            <span class="text-sm font-medium">Help & Support</span>
+                        </div>
+                    </div>
+                    <div class="p-3 hover:bg-gray-700 rounded-lg cursor-pointer">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-cog text-gray-400"></i>
+                            <span class="text-sm font-medium">Settings</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="sidebar-footer" class="p-4 border-t border-gray-600">
+                <div class="flex items-center space-x-3 p-3 hover:bg-gray-700 rounded-lg cursor-pointer">
+                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="User" class="w-8 h-8 rounded-full object-cover">
+                    <div class="flex-1 min-w-0">
+                        <div class="text-sm font-medium">Alex Johnson</div>
+                        <div class="text-xs text-gray-400 truncate">alex@example.com</div>
+                    </div>
+                    <div class="relative">
+                        <button id="user-menu-btn" class="p-1 hover:bg-gray-600 rounded">
+                            <i class="fa-solid fa-ellipsis-vertical text-gray-400"></i>
+                        </button>
+                        <div id="user-menu" class="hidden absolute bottom-full right-0 mb-2 w-48 bg-gray-800 rounded-lg shadow-lg border border-gray-600">
+                            <div class="py-2">
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700 flex items-center space-x-2">
+                                    <i class="fa-solid fa-user text-gray-400"></i>
+                                    <span>Profile</span>
+                                </a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700 flex items-center space-x-2">
+                                    <i class="fa-solid fa-cog text-gray-400"></i>
+                                    <span>Settings</span>
+                                </a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-700 flex items-center space-x-2">
+                                    <i class="fa-solid fa-sign-out-alt text-gray-400"></i>
+                                    <span>Logout</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="main-content" class="flex-1 flex flex-col">
+            
+            <div id="header" class="bg-white border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <h2 class="text-xl font-semibold text-gray-900">Help & Support</h2>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-health-green rounded-full"></div>
+                            <span class="text-sm text-gray-600">Support Available 24/7</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button class="px-4 py-2 bg-health-blue text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium">
+                            <i class="fa-solid fa-headset mr-2"></i>
+                            Contact Support
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="help-content" class="flex-1 overflow-y-auto bg-chat-bg">
+                <div class="max-w-6xl mx-auto p-6">
+                    
+                    <div id="help-hero" class="bg-white rounded-xl p-8 shadow-sm border mb-8">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-health-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fa-solid fa-question-circle text-white text-2xl"></i>
+                            </div>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">How can we help you?</h1>
+                            <p class="text-gray-600 text-lg">Find answers to common questions or get in touch with our support team</p>
+                        </div>
+                        
+                        <div id="search-section" class="mt-8 max-w-2xl mx-auto">
+                            <div class="relative">
+                                <input type="text" placeholder="Search for help articles, guides, or FAQs..." class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent text-lg">
+                                <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                    <i class="fa-solid fa-search text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        
+                        <div id="quick-actions" class="lg:col-span-1">
+                            <div class="bg-white rounded-xl p-6 shadow-sm border">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                                <div class="space-y-3">
+                                    <button class="w-full p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center space-x-3">
+                                        <i class="fa-solid fa-headset text-health-blue"></i>
+                                        <span class="font-medium">Live Chat Support</span>
+                                    </button>
+                                    <button class="w-full p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors flex items-center space-x-3">
+                                        <i class="fa-solid fa-envelope text-health-green"></i>
+                                        <span class="font-medium">Email Support</span>
+                                    </button>
+                                    <button class="w-full p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors flex items-center space-x-3">
+                                        <i class="fa-solid fa-phone text-health-purple"></i>
+                                        <span class="font-medium">Phone Support</span>
+                                    </button>
+                                    <button class="w-full p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors flex items-center space-x-3">
+                                        <i class="fa-solid fa-book text-health-orange"></i>
+                                        <span class="font-medium">User Guide</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="faq-section" class="lg:col-span-2">
+                            <div class="bg-white rounded-xl p-6 shadow-sm border">
+                                <h3 class="text-xl font-semibold text-gray-900 mb-6">Frequently Asked Questions</h3>
+                                
+                                <div id="faq-categories" class="mb-6">
+                                    <div class="flex flex-wrap gap-2">
+                                        <button class="px-4 py-2 bg-health-blue text-white rounded-lg text-sm font-medium">All</button>
+                                        <button class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg text-sm font-medium">Getting Started</button>
+                                        <button class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg text-sm font-medium">Data Sync</button>
+                                        <button class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg text-sm font-medium">Privacy</button>
+                                        <button class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg text-sm font-medium">Troubleshooting</button>
+                                    </div>
+                                </div>
+                                
+                                <div id="faq-list" class="space-y-4">
+                                    <div class="faq-item border border-gray-200 rounded-lg">
+                                        <button class="w-full p-4 text-left hover:bg-gray-50 flex items-center justify-between">
+                                            <span class="font-medium text-gray-900">How do I connect my iPhone's Health app to HealthKit Chat?</span>
+                                            <i class="fa-solid fa-chevron-down text-gray-400"></i>
+                                        </button>
+                                        <div class="hidden p-4 border-t border-gray-200 bg-gray-50">
+                                            <p class="text-gray-600">To connect your iPhone's Health app, go to Settings > Health Data > Grant Access. Make sure you have the latest iOS version and enable all relevant health categories you want to analyze.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="faq-item border border-gray-200 rounded-lg">
+                                        <button class="w-full p-4 text-left hover:bg-gray-50 flex items-center justify-between">
+                                            <span class="font-medium text-gray-900">Is my health data secure and private?</span>
+                                            <i class="fa-solid fa-chevron-down text-gray-400"></i>
+                                        </button>
+                                        <div class="hidden p-4 border-t border-gray-200 bg-gray-50">
+                                            <p class="text-gray-600">Yes, your health data is encrypted end-to-end and never leaves your device. We use Apple's HealthKit framework which ensures all data remains private and secure on your device.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="faq-item border border-gray-200 rounded-lg">
+                                        <button class="w-full p-4 text-left hover:bg-gray-50 flex items-center justify-between">
+                                            <span class="font-medium text-gray-900">Why is my sleep data not showing up in the chat?</span>
+                                            <i class="fa-solid fa-chevron-down text-gray-400"></i>
+                                        </button>
+                                        <div class="hidden p-4 border-t border-gray-200 bg-gray-50">
+                                            <p class="text-gray-600">Sleep data requires specific permissions. Check your Health app permissions and ensure sleep tracking is enabled. Also verify that your Apple Watch or sleep tracking app is properly configured.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="faq-item border border-gray-200 rounded-lg">
+                                        <button class="w-full p-4 text-left hover:bg-gray-50 flex items-center justify-between">
+                                            <span class="font-medium text-gray-900">Can I export my health analysis reports?</span>
+                                            <i class="fa-solid fa-chevron-down text-gray-400"></i>
+                                        </button>
+                                        <div class="hidden p-4 border-t border-gray-200 bg-gray-50">
+                                            <p class="text-gray-600">Yes, you can export your analysis reports as PDF files. Click the download button in the chat header or use the "Export Report" option in the chat menu.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="faq-item border border-gray-200 rounded-lg">
+                                        <button class="w-full p-4 text-left hover:bg-gray-50 flex items-center justify-between">
+                                            <span class="font-medium text-gray-900">How accurate are the health insights provided?</span>
+                                            <i class="fa-solid fa-chevron-down text-gray-400"></i>
+                                        </button>
+                                        <div class="hidden p-4 border-t border-gray-200 bg-gray-50">
+                                            <p class="text-gray-600">Our AI analyzes your data using validated health algorithms, but insights are for informational purposes only. Always consult with healthcare professionals for medical advice.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="contact-section" class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-xl p-6 shadow-sm border text-center">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fa-solid fa-envelope text-health-blue text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Email Support</h4>
+                            <p class="text-gray-600 text-sm mb-4">Get help via email within 24 hours</p>
+                            <button class="w-full bg-health-blue text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+                                Send Email
+                            </button>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-6 shadow-sm border text-center">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fa-solid fa-comments text-health-green text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Live Chat</h4>
+                            <p class="text-gray-600 text-sm mb-4">Chat with our support team instantly</p>
+                            <button class="w-full bg-health-green text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">
+                                Start Chat
+                            </button>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-6 shadow-sm border text-center">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fa-solid fa-phone text-health-purple text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Phone Support</h4>
+                            <p class="text-gray-600 text-sm mb-4">Call us for immediate assistance</p>
+                            <button class="w-full bg-health-purple text-white py-2 px-4 rounded-lg hover:bg-purple-600 transition-colors">
+                                Call Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const userMenuBtn = document.getElementById('user-menu-btn');
+    const userMenu = document.getElementById('user-menu');
+    const faqItems = document.querySelectorAll('.faq-item button');
+    
+    userMenuBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        userMenu.classList.toggle('hidden');
+    });
+    
+    document.addEventListener('click', function() {
+        userMenu.classList.add('hidden');
+    });
+    
+    faqItems.forEach(button => {
+        button.addEventListener('click', function() {
+            const answer = this.nextElementSibling;
+            const icon = this.querySelector('i');
+            
+            answer.classList.toggle('hidden');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        });
+    });
+    
+    const categoryButtons = document.querySelectorAll('#faq-categories button');
+    categoryButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            categoryButtons.forEach(btn => {
+                btn.classList.remove('bg-health-blue', 'text-white');
+                btn.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
+            });
+            
+            this.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
+            this.classList.add('bg-health-blue', 'text-white');
+        });
+    });
+});
+</script>
+
+</body>
+</html>

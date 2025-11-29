@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        'health-blue': '#007AFF',
+                        'health-green': '#30D158',
+                        'health-red': '#FF3B30',
+                        'health-orange': '#FF9500',
+                        'health-purple': '#AF52DE',
+                        'chat-bg': '#F8FAFC',
+                        'sidebar-bg': '#1F2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>::-webkit-scrollbar { display: none;}</style>
+</head>
+<body class="bg-gray-50 font-sans">
+    
+    <div id="login-container" class="min-h-screen flex">
+        
+        <div id="login-left-panel" class="flex-1 bg-gradient-to-br from-health-blue to-health-purple flex items-center justify-center p-8">
+            <div class="max-w-md text-white">
+                <div class="flex items-center space-x-3 mb-8">
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fa-solid fa-heart-pulse text-white text-xl"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold">HealthKit Chat</h1>
+                </div>
+                
+                <div class="space-y-6">
+                    <h2 class="text-3xl font-bold leading-tight">Your Personal Health Assistant</h2>
+                    <p class="text-white/80 text-lg">Connect with your iOS Health data and get personalized insights through intelligent conversations.</p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-shield-heart text-white text-sm"></i>
+                            </div>
+                            <span class="text-white/90">Secure health data analysis</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-chart-line text-white text-sm"></i>
+                            </div>
+                            <span class="text-white/90">Personalized health insights</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-comments text-white text-sm"></i>
+                            </div>
+                            <span class="text-white/90">Natural conversation interface</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="login-right-panel" class="w-full max-w-md bg-white flex flex-col justify-center p-8">
+            <div id="login-form-container" class="w-full max-w-sm mx-auto">
+                
+                <div id="auth-header" class="text-center mb-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h3>
+                    <p class="text-gray-600">Sign in to access your health insights</p>
+                </div>
+                
+                <div id="auth-tabs" class="flex bg-gray-100 rounded-lg p-1 mb-6">
+                    <button id="login-tab" class="flex-1 py-2 px-4 text-sm font-medium rounded-md bg-white text-health-blue shadow-sm transition-all">
+                        Sign In
+                    </button>
+                    <button id="register-tab" class="flex-1 py-2 px-4 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 transition-all">
+                        Register
+                    </button>
+                </div>
+                
+                <form id="login-form" class="space-y-4">
+                    <div id="email-field">
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <div class="relative">
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email"
+                                class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent pl-10"
+                                placeholder="Enter your email"
+                                required
+                            >
+                            <i class="fa-solid fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                    
+                    <div id="password-field">
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password"
+                                class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent pl-10 pr-10"
+                                placeholder="Enter your password"
+                                required
+                            >
+                            <i class="fa-solid fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <button type="button" id="toggle-password" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="confirm-password-field" class="hidden">
+                        <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                id="confirm-password" 
+                                name="confirm-password"
+                                class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent pl-10"
+                                placeholder="Confirm your password"
+                            >
+                            <i class="fa-solid fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                    
+                    <div id="remember-forgot" class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-health-blue focus:ring-health-blue">
+                            <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                        </label>
+                        <a href="#" class="text-sm text-health-blue hover:text-blue-600">Forgot password?</a>
+                    </div>
+                    
+                    <button id="auth-submit" type="submit" class="w-full bg-health-blue hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-medium transition-colors">
+                        Sign In
+                    </button>
+                </form>
+                
+                <div id="divider" class="my-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="social-login" class="space-y-3">
+                    <button class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fa-brands fa-apple text-xl mr-3"></i>
+                        <span class="font-medium">Continue with Apple</span>
+                    </button>
+                    <button class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fa-brands fa-google text-xl mr-3 text-red-500"></i>
+                        <span class="font-medium">Continue with Google</span>
+                    </button>
+                </div>
+                
+                <div id="health-connect" class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-info-circle text-health-blue"></i>
+                        <div class="text-sm">
+                            <div class="font-medium text-gray-900">Health Data Integration</div>
+                            <div class="text-gray-600">Connect your iOS Health app after signing in</div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div id="settings-link" class="absolute top-6 right-6">
+                <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <i class="fa-solid fa-cog text-gray-600"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginTab = document.getElementById('login-tab');
+            const registerTab = document.getElementById('register-tab');
+            const confirmPasswordField = document.getElementById('confirm-password-field');
+            const rememberForgot = document.getElementById('remember-forgot');
+            const authSubmit = document.getElementById('auth-submit');
+            const togglePassword = document.getElementById('toggle-password');
+            const passwordInput = document.getElementById('password');
+            
+            let isLoginMode = true;
+            
+            loginTab.addEventListener('click', function() {
+                if (!isLoginMode) {
+                    isLoginMode = true;
+                    loginTab.classList.add('bg-white', 'text-health-blue', 'shadow-sm');
+                    loginTab.classList.remove('text-gray-600');
+                    registerTab.classList.remove('bg-white', 'text-health-blue', 'shadow-sm');
+                    registerTab.classList.add('text-gray-600');
+                    confirmPasswordField.classList.add('hidden');
+                    rememberForgot.classList.remove('hidden');
+                    authSubmit.textContent = 'Sign In';
+                }
+            });
+            
+            registerTab.addEventListener('click', function() {
+                if (isLoginMode) {
+                    isLoginMode = false;
+                    registerTab.classList.add('bg-white', 'text-health-blue', 'shadow-sm');
+                    registerTab.classList.remove('text-gray-600');
+                    loginTab.classList.remove('bg-white', 'text-health-blue', 'shadow-sm');
+                    loginTab.classList.add('text-gray-600');
+                    confirmPasswordField.classList.remove('hidden');
+                    rememberForgot.classList.add('hidden');
+                    authSubmit.textContent = 'Create Account';
+                }
+            });
+            
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                const icon = this.querySelector('i');
+                if (type === 'password') {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                } else {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                }
+            });
+            
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('Form submitted:', isLoginMode ? 'Login' : 'Register');
+            });
+        });
+    </script>
+
+</body>
+</html>

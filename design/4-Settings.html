@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        'health-blue': '#007AFF',
+                        'health-green': '#30D158',
+                        'health-red': '#FF3B30',
+                        'health-orange': '#FF9500',
+                        'health-purple': '#AF52DE',
+                        'chat-bg': '#F8FAFC',
+                        'sidebar-bg': '#1F2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>::-webkit-scrollbar { display: none;}</style>
+</head>
+<body class="bg-gray-50 font-sans">
+    
+    <div id="app-container" class="flex h-screen">
+        
+        <div id="sidebar" class="w-80 bg-sidebar-bg text-white flex flex-col">
+            <div id="sidebar-header" class="p-6 border-b border-gray-600">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 bg-health-blue rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-heart-pulse text-white text-lg"></i>
+                    </div>
+                    <h1 class="text-xl font-bold">HealthKit Chat</h1>
+                </div>
+                <button id="new-chat-btn" class="w-full bg-health-blue hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>New Chat</span>
+                </button>
+            </div>
+            
+            <div id="navigation-menu" class="p-4">
+                <div class="space-y-2">
+                    <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
+                        <i class="fa-solid fa-comments text-gray-400"></i>
+                        <span class="text-sm font-medium">Chat</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
+                        <i class="fa-solid fa-chart-line text-gray-400"></i>
+                        <span class="text-sm font-medium">Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 bg-gray-700 rounded-lg cursor-pointer border-l-3 border-health-blue">
+                        <i class="fa-solid fa-cog text-health-blue"></i>
+                        <span class="text-sm font-medium">Settings</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div id="chat-history" class="flex-1 overflow-y-auto p-4">
+                <div class="mb-4">
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Recent Chats</h3>
+                </div>
+                <div class="space-y-2">
+                    <div class="p-3 hover:bg-gray-700 rounded-lg cursor-pointer">
+                        <div class="text-sm font-medium">Sleep Analysis</div>
+                        <div class="text-xs text-gray-400">Today, 2:30 PM</div>
+                    </div>
+                    <div class="p-3 hover:bg-gray-700 rounded-lg cursor-pointer">
+                        <div class="text-sm font-medium">Heart Rate Trends</div>
+                        <div class="text-xs text-gray-400">Yesterday, 4:15 PM</div>
+                    </div>
+                    <div class="p-3 hover:bg-gray-700 rounded-lg cursor-pointer">
+                        <div class="text-sm font-medium">Step Count Goals</div>
+                        <div class="text-xs text-gray-400">Dec 26, 10:22 AM</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="sidebar-footer" class="p-4 border-t border-gray-600">
+                <div class="flex items-center space-x-3 p-3 hover:bg-gray-700 rounded-lg cursor-pointer">
+                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="User" class="w-8 h-8 rounded-full object-cover">
+                    <div class="flex-1 min-w-0">
+                        <div class="text-sm font-medium">Alex Johnson</div>
+                        <div class="text-xs text-gray-400 truncate">alex@example.com</div>
+                    </div>
+                    <i class="fa-solid fa-ellipsis-vertical text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div id="main-content" class="flex-1 flex flex-col">
+            
+            <div id="header" class="bg-white border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <h2 class="text-xl font-semibold text-gray-900">Settings</h2>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-health-green rounded-full"></div>
+                            <span class="text-sm text-gray-600">MCP HealthKit Connected</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button class="px-4 py-2 bg-health-blue text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="settings-area" class="flex-1 overflow-y-auto bg-chat-bg">
+                <div class="max-w-5xl mx-auto p-6">
+                    
+                    <div id="settings-tabs" class="mb-8">
+                        <div class="border-b border-gray-200">
+                            <nav class="flex space-x-8">
+                                <button class="py-2 px-1 border-b-2 border-health-blue text-health-blue font-medium text-sm" id="tab-account">Account</button>
+                                <button class="py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm" id="tab-privacy">Privacy</button>
+                                <button class="py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm" id="tab-notifications">Notifications</button>
+                                <button class="py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm" id="tab-integrations">Integrations</button>
+                                <button class="py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm" id="tab-advanced">Advanced</button>
+                            </nav>
+                        </div>
+                    </div>
+                    
+                    <div id="account-settings" class="space-y-6">
+                        
+                        <div id="profile-section" class="bg-white rounded-xl p-6 shadow-sm border">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Profile Information</h3>
+                            <div class="flex items-start space-x-6">
+                                <div class="flex flex-col items-center">
+                                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Profile" class="w-20 h-20 rounded-full object-cover mb-3">
+                                    <button class="text-sm text-health-blue hover:text-blue-600 font-medium">Change Photo</button>
+                                </div>
+                                <div class="flex-1 grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                        <input type="text" value="Alex" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                        <input type="text" value="Johnson" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent">
+                                    </div>
+                                    <div class="col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                        <input type="email" value="alex@example.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="health-profile-section" class="bg-white rounded-xl p-6 shadow-sm border">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Health Profile</h3>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                                    <input type="date" value="1990-05-15" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Height</label>
+                                    <div class="flex space-x-2">
+                                        <input type="number" value="5" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent">
+                                        <span class="flex items-center text-sm text-gray-500">ft</span>
+                                        <input type="number" value="10" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent">
+                                        <span class="flex items-center text-sm text-gray-500">in</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Weight (lbs)</label>
+                                    <input type="number" value="165" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="security-section" class="bg-white rounded-xl p-6 shadow-sm border">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Security</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div>
+                                        <div class="font-medium text-gray-900">Password</div>
+                                        <div class="text-sm text-gray-500">Last changed 3 months ago</div>
+                                    </div>
+                                    <button class="text-health-blue hover:text-blue-600 font-medium text-sm">Change Password</button>
+                                </div>
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div>
+                                        <div class="font-medium text-gray-900">Two-Factor Authentication</div>
+                                        <div class="text-sm text-gray-500">Add an extra layer of security</div>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-health-blue"></div>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between py-3">
+                                    <div>
+                                        <div class="font-medium text-gray-900">Login Sessions</div>
+                                        <div class="text-sm text-gray-500">Manage your active sessions</div>
+                                    </div>
+                                    <button class="text-health-blue hover:text-blue-600 font-medium text-sm">View Sessions</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="preferences-section" class="bg-white rounded-xl p-6 shadow-sm border">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Preferences</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div>
+                                        <div class="font-medium text-gray-900">Language</div>
+                                        <div class="text-sm text-gray-500">Choose your preferred language</div>
+                                    </div>
+                                    <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent">
+                                        <option>English</option>
+                                        <option>Spanish</option>
+                                        <option>French</option>
+                                        <option>German</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div>
+                                        <div class="font-medium text-gray-900">Time Zone</div>
+                                        <div class="text-sm text-gray-500">Your current time zone</div>
+                                    </div>
+                                    <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-health-blue focus:border-transparent">
+                                        <option>Pacific Standard Time (PST)</option>
+                                        <option>Eastern Standard Time (EST)</option>
+                                        <option>Central Standard Time (CST)</option>
+                                        <option>Mountain Standard Time (MST)</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center justify-between py-3">
+                                    <div>
+                                        <div class="font-medium text-gray-900">Units</div>
+                                        <div class="text-sm text-gray-500">Measurement system preference</div>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="px-4 py-2 bg-health-blue text-white rounded-lg text-sm font-medium">Imperial</button>
+                                        <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200">Metric</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="data-export-section" class="bg-white rounded-xl p-6 shadow-sm border">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Data Management</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div>
+                                        <div class="font-medium text-gray-900">Export Health Data</div>
+                                        <div class="text-sm text-gray-500">Download your health data in CSV format</div>
+                                    </div>
+                                    <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 flex items-center space-x-2">
+                                        <i class="fa-solid fa-download"></i>
+                                        <span>Export</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center justify-between py-3">
+                                    <div>
+                                        <div class="font-medium text-red-600">Delete Account</div>
+                                        <div class="text-sm text-gray-500">Permanently delete your account and all data</div>
+                                    </div>
+                                    <button class="px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100">Delete Account</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('[id^="tab-"]');
+    const settingSections = document.querySelectorAll('[id$="-settings"]');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            tabs.forEach(t => {
+                t.classList.remove('border-health-blue', 'text-health-blue');
+                t.classList.add('border-transparent', 'text-gray-500');
+            });
+            
+            this.classList.remove('border-transparent', 'text-gray-500');
+            this.classList.add('border-health-blue', 'text-health-blue');
+        });
+    });
+    
+    const toggleSwitches = document.querySelectorAll('input[type="checkbox"]');
+    toggleSwitches.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            console.log('Toggle changed:', this.checked);
+        });
+    });
+});
+</script>
+
+</body>
+</html>
