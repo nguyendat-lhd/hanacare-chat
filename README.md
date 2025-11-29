@@ -11,43 +11,66 @@
 
 ## 🏗 Architecture
 
-- **Frontend**: React, Vite, TailwindCSS
-- **Backend**: Python 3.11, FastAPI
+- **Frontend**: Streamlit (Python-based web app)
+- **MCP Server**: Python 3.11+ (Model Context Protocol server for AI tools)
 - **Database (App Data)**: MongoDB (User profiles, Chat history)
 - **Analytics Engine**: DuckDB (Direct CSV querying for health metrics)
-- **AI**: Claude 3.5 Sonnet / GPT-4o via MCP (Model Context Protocol)
+- **AI**: GPT-4o / Claude 3.5 Sonnet via OpenAI API + MCP tools
 
 ## 🛠 Prerequisites
 
 - Python 3.11+
-- Node.js 18+
 - MongoDB (Local or Atlas)
+- OpenAI API Key (for AI chat features)
 - [Simple Health Export CSV](https://apps.apple.com/us/app/simple-health-export-csv/id1535380115) app (for getting your data)
 
-## 📦 Installation
+## 📦 Quick Start
 
-### 1. Clone the repository
+### Prerequisites
+- Python 3.11+
+- MongoDB (Local or Atlas)
+- OpenAI API Key
+
+### Installation Steps
+
+1. **Setup Environment**
 ```bash
-git clone https://github.com/yourusername/hanacare-chat.git
-cd hanacare-chat
+cp .env.example .env
+# Edit .env with your MongoDB URI and OpenAI API key
 ```
 
-### 2. Backend Setup
+2. **Install Dependencies**
 ```bash
-cd packages/api
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# MCP Server
+cd packages/mcp_server
+python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env      # Configure your env vars
-uvicorn main:app --reload
+
+# Streamlit App
+cd ../../apps/streamlit
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
 ```
 
-### 3. Frontend Setup
+3. **Start MongoDB** (if using local)
 ```bash
-cd apps/web
-npm install
-npm run dev
+# macOS
+brew services start mongodb-community
+
+# Or Docker
+docker run -d -p 27017:27017 --name mongodb mongo:latest
 ```
+
+4. **Run Application**
+```bash
+cd apps/streamlit
+source venv/bin/activate
+streamlit run app.py
+```
+
+App will open at `http://localhost:8501`
+
+> 📖 **Xem hướng dẫn chi tiết**: [HUONG_DAN_CHAY.md](./HUONG_DAN_CHAY.md) (Tiếng Việt)
 
 ## 📊 Data Ingestion Flow
 
