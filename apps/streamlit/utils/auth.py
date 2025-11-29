@@ -58,8 +58,18 @@ def login_page():
         if st.button("Login", use_container_width=True):
             if user_id and password:
                 if check_auth(user_id, password):
+                    from utils.session import create_session
+                    # Create session
+                    session_token = create_session(user_id)
                     st.session_state.authenticated = True
                     st.session_state.user_id = user_id
+                    st.session_state.session_token = session_token
+                    # Optionally set query params (for URL persistence)
+                    try:
+                        st.query_params["user"] = user_id
+                        st.query_params["token"] = session_token
+                    except:
+                        pass  # Query params are optional
                     st.success("✅ Login successful!")
                     st.rerun()
                 else:

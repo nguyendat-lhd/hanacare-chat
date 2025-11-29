@@ -44,11 +44,33 @@ with st.expander("📖 How to Export Health Data", expanded=False):
 
 # Check existing data
 existing_files = get_file_metadata(user_id)
-if existing_files:
-    st.info(f"📁 You have {len(existing_files)} previous upload(s)")
-    with st.expander("View previous uploads"):
-        for file_info in existing_files:
-            st.text(f"📄 {file_info.get('filename', 'Unknown')} - {file_info.get('upload_date', 'Unknown date')}")
+csv_files = list(storage_path.glob("*.csv")) if storage_path.exists() else []
+
+# Check if using sample data
+is_sample_data = len(csv_files) > 0 and len(csv_files) <= 4 and all(
+    f.stem in ['steps', 'heart_rate', 'sleep', 'workouts'] for f in csv_files
+)
+
+if csv_files:
+    if is_sample_data:
+        st.info("💡 Currently using **sample data** for demo. Upload your real health data below to replace it.")
+    else:
+        st.info(f"📁 You have {len(csv_files)} data file(s)")
+    
+    if existing_files:
+        with st.expander("View previous uploads"):
+            for file_info in existing_files:
+                st.text(f"📄 {file_info.get('filename', 'Unknown')} - {file_info.get('upload_date', 'Unknown date')}")
+    
+    # Option to clear existing data
+    if st.button("🗑️ Clear All Data", help="This will delete all existing data files"):
+        import shutil
+        if storage_path.exists():
+            shutil.rmtree(storage_path)
+            storage_path.mkdir(parents=True, exist_ok=True)
+            st.session_state.health_data_loaded = False
+            st.success("✅ All data cleared!")
+            st.rerun()
 
 st.divider()
 
@@ -77,6 +99,10 @@ if uploaded_file:
             # List CSV files
             csv_names = [f.name for f in csv_files]
             
+            # Validate CSV files can be loaded into DuckDB
+            from utils.csv_validator import validate_csv_files
+            validation_result = validate_csv_files(storage_path, max_files=min(20, len(csv_files)))
+            
             # Save metadata to MongoDB
             file_metadata = {
                 "user_id": user_id,
@@ -84,7 +110,12 @@ if uploaded_file:
                 "csv_count": len(csv_files),
                 "csv_files": csv_names,
                 "upload_date": datetime.now().isoformat(),
-                "file_size": uploaded_file.size
+                "file_size": uploaded_file.size,
+                "validation": {
+                    "validated": validation_result.get("validated", 0),
+                    "failed": validation_result.get("failed", 0),
+                    "total": validation_result.get("total_files", 0)
+                }
             }
             
             save_file_metadata(user_id, file_metadata)
@@ -93,7 +124,17 @@ if uploaded_file:
             st.session_state.health_data_loaded = True
             
             # Success message
-            st.success(f"✅ Uploaded successfully!")
+            if validation_result.get("success"):
+                st.success(f"✅ Uploaded successfully! {validation_result.get('validated', 0)} CSV file(s) validated and ready to query.")
+            else:
+                st.warning(f"⚠️ Uploaded but {validation_result.get('failed', 0)} file(s) had issues. Some files may not be queryable.")
+            
+            if validation_result.get("failed_files"):
+                with st.expander("⚠️ Files with issues", expanded=False):
+                    for failed_file in validation_result["failed_files"][:5]:
+                        st.text(f"  • {failed_file['file']}: {failed_file.get('error', 'Unknown error')[:100]}")
+            
+            st.info("💡 Your real health data has been uploaded. You can now chat about your actual data!")
             
             # Display summary
             col1, col2 = st.columns(2)

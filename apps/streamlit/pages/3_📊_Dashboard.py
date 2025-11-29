@@ -23,19 +23,33 @@ if not st.session_state.get("authenticated"):
     st.warning("⚠️ Please login first!")
     st.stop()
 
-if not st.session_state.get("health_data_loaded"):
-    st.warning("⚠️ Please upload your health data first!")
-    st.info("Go to the **Upload** page to upload your ZIP file")
-    st.stop()
-
+# Auto-generate sample data if no data exists
 user_id = st.session_state.user_id
-# Get project root (3 levels up from pages/)
+from pathlib import Path
 project_root = Path(__file__).parent.parent.parent.parent
 storage_path = project_root / "storage" / "user_data" / user_id
 
+if not st.session_state.get("health_data_loaded"):
+    # Check if sample data exists or generate it
+    csv_files = list(storage_path.glob("*.csv")) if storage_path.exists() else []
+    
+    if len(csv_files) == 0:
+        # Generate sample data
+        from utils.sample_data import generate_sample_data
+        with st.spinner("🎲 Generating sample data for demo..."):
+            try:
+                result = generate_sample_data(user_id, storage_path)
+                st.session_state.health_data_loaded = True
+                st.success(f"✅ Generated sample data for demo")
+            except Exception as e:
+                st.error(f"❌ Error generating sample data: {e}")
+                st.stop()
+    else:
+        st.session_state.health_data_loaded = True
+
+# storage_path already defined above
 if not storage_path.exists():
-    st.error("❌ No data directory found")
-    st.stop()
+    storage_path.mkdir(parents=True, exist_ok=True)
 
 # Find CSV files
 csv_files = list(storage_path.glob("*.csv"))
@@ -48,19 +62,27 @@ if not csv_files:
 conn = duckdb.connect()
 
 try:
-    # Register CSV files as tables
+    # Register CSV files as tables - keep original names
+    import sys
+    from pathlib import Path
+    project_root = Path(__file__).parent.parent.parent.parent
+    sys.path.insert(0, str(project_root / "packages" / "mcp_server" / "tools"))
+    from table_utils import escape_table_name
+    
     for csv_file in csv_files:
-        table_name = csv_file.stem
+        original_name = csv_file.stem
+        # Keep original name, just escape it
+        escaped_name = escape_table_name(original_name)
         try:
             conn.execute(f"""
-                CREATE TABLE IF NOT EXISTS {table_name} AS 
+                CREATE TABLE IF NOT EXISTS {escaped_name} AS 
                 SELECT * FROM read_csv_auto('{csv_file}')
             """)
         except Exception as e:
-            st.warning(f"Could not load {table_name}: {e}")
+            st.warning(f"Could not load {original_name} (normalized: {normalized_name}): {e}")
     
-    # Get available tables
-    tables = [f.stem for f in csv_files]
+    # Get available tables (use original names)
+    tables = [f.stem for f in csv_files]  # Keep original names
     
     # Health Cards
     render_health_cards(conn, tables)
@@ -75,7 +97,8 @@ try:
         st.markdown("### 👣 Steps")
         try:
             steps_table = next((t for t in tables if "step" in t.lower()), tables[0])
-            steps_df = conn.execute(f"SELECT * FROM {steps_table} LIMIT 1000").df()
+            escaped_table = escape_table_name(steps_table)
+            steps_df = conn.execute(f"SELECT * FROM {escaped_table} LIMIT 1000").df()
             
             if not steps_df.empty:
                 # Try to find date and value columns
@@ -97,7 +120,8 @@ try:
         try:
             hr_table = next((t for t in tables if "heart" in t.lower() or "hr" in t.lower()), None)
             if hr_table:
-                hr_df = conn.execute(f"SELECT * FROM {hr_table} LIMIT 1000").df()
+                escaped_table = escape_table_name(hr_table)
+                hr_df = conn.execute(f"SELECT * FROM {escaped_table} LIMIT 1000").df()
                 
                 if not hr_df.empty:
                     date_col = next((c for c in hr_df.columns if "date" in c.lower() or "time" in c.lower()), None)
@@ -121,7 +145,8 @@ try:
     
     if selected_table:
         try:
-            df = conn.execute(f"SELECT * FROM {selected_table} LIMIT 100").df()
+            escaped_table = escape_table_name(selected_table)
+            df = conn.execute(f"SELECT * FROM {escaped_table} LIMIT 100").df()
             st.dataframe(df, use_container_width=True)
             
             st.markdown(f"**Columns:** {', '.join(df.columns)}")

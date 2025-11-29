@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import duckdb
+from table_utils import escape_table_name
 
 async def get_health_schema(user_id: str) -> dict:
     """
@@ -44,26 +45,68 @@ async def get_health_schema(user_id: str) -> dict:
     
     try:
         for csv_file in csv_files:
-            table_name = csv_file.stem  # e.g., "steps", "heart_rate"
+            original_name = csv_file.stem  # Keep original name
+            # Use original name with temp prefix
+            temp_table_name = f"temp_{original_name.replace('-', '_').replace('.', '_')[:50]}"
+            escaped_temp_name = escape_table_name(temp_table_name)
+            escaped_original_name = escape_table_name(original_name)
             
             try:
-                # Read CSV to get schema
-                conn.execute(f"CREATE TABLE IF NOT EXISTS temp_{table_name} AS SELECT * FROM read_csv_auto('{csv_file}')")
+                csv_path = str(csv_file).replace("'", "''")  # Escape single quotes
+                
+                # Try read_csv_auto with error handling options
+                try:
+                    # Use read_csv_auto without parameters (auto-detects)
+                    conn.execute(f"""
+                        CREATE TABLE IF NOT EXISTS {escaped_temp_name} AS 
+                        SELECT * FROM read_csv_auto('{csv_path}')
+                    """)
+                except Exception as csv_error:
+                    # Fallback to pandas if read_csv_auto fails (more forgiving)
+                    import pandas as pd
+                    try:
+                        df = pd.read_csv(
+                            csv_file,
+                            on_bad_lines='skip',  # Skip bad lines
+                            engine='python',
+                            quoting=1,
+                            escapechar='\\',
+                            low_memory=False,
+                            encoding='utf-8',
+                            errors='replace'
+                        )
+                        df = df.dropna(how='all')
+                        df = df[~df.isnull().all(axis=1)]
+                        # Register as temporary table name
+                        temp_pandas_name = f"temp_pandas_{normalized_name}"
+                        conn.register(temp_pandas_name, df)
+                        # Recreate as temp table
+                        conn.execute(f"CREATE TABLE IF NOT EXISTS {escaped_temp_name} AS SELECT * FROM {temp_pandas_name}")
+                        conn.unregister(temp_pandas_name)
+                    except Exception as pandas_error:
+                        # If both fail, mark as error but continue
+                        schemas[original_name] = {
+                            "error": f"CSV parsing failed: {str(csv_error)[:100]}",
+                            "file": csv_file.name
+                        }
+                        continue
                 
                 # Get column info
                 columns_info = conn.execute(
-                    f"DESCRIBE temp_{table_name}"
+                    f"DESCRIBE {escaped_temp_name}"
                 ).fetchall()
                 
-                schemas[table_name] = {
+                schemas[original_name] = {
+                    "table_name": original_name,  # Use original name
+                    "escaped_name": escaped_original_name,  # Escaped name ready to use in queries
                     "columns": [col[0] for col in columns_info],
                     "column_types": {col[0]: col[1] for col in columns_info},
                     "file": csv_file.name,
-                    "row_count": conn.execute(f"SELECT COUNT(*) FROM temp_{table_name}").fetchone()[0]
+                    "row_count": conn.execute(f"SELECT COUNT(*) FROM {escaped_temp_name}").fetchone()[0]
                 }
                 
                 # Clean up temp table
-                conn.execute(f"DROP TABLE IF EXISTS temp_{table_name}")
+                conn.execute(f"DROP TABLE IF EXISTS {escaped_temp_name}")
             
             except Exception as e:
                 schemas[table_name] = {
